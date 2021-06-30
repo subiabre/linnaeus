@@ -1,0 +1,4 @@
+output:
+  fileNaming: "{year}-{month}-{day}-{hour}{minutes}_{fileName}.{fileExtension}"
+  folderStructure:
+    default: '/{year}/{month}/{day}/{imageType}'
