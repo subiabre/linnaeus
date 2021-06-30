@@ -16,35 +16,45 @@ class IngestService
     }
 
     /**
-     * Ingest an array of input files and outputs them according to the configuration
+     * Generate the ingest output for an image file
+     * @param string $file
+     * @param Config $config
+     * @return array
+     */
+    public function ingestFile(string $file, Config $config): array
+    {
+        $data = $this->processExifData($file);
+
+        return [
+            'output' => $this->storageService->buildPath(
+                $config->setFolder($data),
+                $config->setFilename($data)
+            ),
+            'input' => $file
+        ];
+    }
+
+    /**
+     * Generate the ingest output for each file in an array of image files
      * @param array $files
      * @param Config $config
-     * @param bool $copySources If set to true it will copy the file from sources, else it will move them from origin
+     * @return array
      */
-    public function ingestFiles(array $files, Config $config, bool $copySources = true)
+    public function ingestFiles(array $files, Config $config): array
     {
         foreach ($files as $key => $file) {
             if (!$this->storageService->isImage($file)) {
                 continue;
             }
 
-            $data = $this->processExifData($file);
-            $outputPath = $this->storageService->buildPath(
-                $config->getMediaFolder(),
-                $config->setFolder($data),
-                $config->setFilename($data)
-            );
-
-            if ($copySources) {
-                copy($file, $outputPath);
-            } else {
-                rename($file, $outputPath);
-            }
+            $files[$key] = $this->ingestFile($file, $config);
         }
+
+        return $files;
     }
 
     /**
-     * Returns a normalized array from the exif data that can be processed by App\Config
+     * Returns a normalized array from the exif data that can be processed by `App\Config`
      * @param string $file
      * @return array
      */

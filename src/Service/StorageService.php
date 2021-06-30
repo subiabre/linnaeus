@@ -19,6 +19,21 @@ class StorageService
     }
 
     /**
+     * Creates a given path if it does not exist
+     * @param string $path
+     * @return string $path
+     */
+    public function makePath(string $path): string
+    {
+        $folder = rtrim($path, basename($path));
+        if (!file_exists($folder)) {
+            mkdir($folder, 0777, true);
+        }
+
+        return $path;
+    }
+
+    /**
      * Recursively scan a directory and load into a one dimension array all the items inside
      * @param string $path
      * @return array
@@ -39,6 +54,28 @@ class StorageService
         }
 
         return $files;
+    }
+
+    /**
+     * Copy the ingest file from the source to remote
+     * @param array $ingest
+     * @param string $remote
+     */
+    public function copyIngestToRemote(array $ingest, string $remote)
+    {
+        $output = $this->makePath($this->buildPath($remote, $ingest['output']));
+        copy($ingest['input'], $output);
+    }
+
+    /**
+     * Move the ingest file from the source to remote
+     * @param array $ingest
+     * @param string $remote
+     */
+    public function moveIngestToRemote(array $ingest, string $remote)
+    {
+        $output = $this->makePath($this->buildPath($remote, $ingest['output']));
+        rename($ingest['input'], $output);
     }
 
     /**

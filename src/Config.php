@@ -21,7 +21,6 @@ class Config
 
     public function __construct(
         string $config,
-        string $mediaFolder,
         StorageService $storageService
     ) {
         $configPath = $storageService->buildPath(
@@ -31,17 +30,11 @@ class Config
         );
 
         $this->config = Yaml::parseFile($configPath);
-        $this->config['mediaFolder'] = $mediaFolder;
     }
 
     public function getConfig(): array
     {
         return $this->config;
-    }
-
-    public function getMediaFolder(): string
-    {
-        return $this->config['mediaFolder'];
     }
 
     public function setFilename(array $data): string
