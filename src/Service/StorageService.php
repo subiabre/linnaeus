@@ -57,6 +57,25 @@ class StorageService
     }
 
     /**
+     * Returns the array from `readDirectory` but it filters the files for those that match `isImage`
+     * @param string $path
+     * @return array
+     */
+    public function readDirectoryImages(string $path): array
+    {
+        $images = [];
+        
+        $files = $this->readDirectory($path);
+        foreach ($files as $key => $file) {
+            if ($this->isImage($file)) {
+                array_push($images, $file);
+            }
+        }
+
+        return $images;
+    }
+
+    /**
      * Copy the ingest file from the source to remote
      * @param array $ingest
      * @param string $remote

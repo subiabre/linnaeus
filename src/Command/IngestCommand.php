@@ -73,17 +73,14 @@ class IngestCommand extends Command
             $remote = $this->storageService->makePath($input->getArgument('remote'));
         }
 
-        $files = $this->storageService->readDirectory($source);
+        $images = $this->storageService->readDirectoryImages($source);
 
-        $progressBar = new ProgressBar($output, count($files));
+        $progressBar = new ProgressBar($output, count($images));
         $progressBar->start();
 
-        foreach ($files as $key => $file) {
-            if (!$this->storageService->isImage($file)) {
-                continue;
-            }
-
-            $ingest = $this->ingestService->ingestFile($file, $this->config);
+        foreach ($images as $key => $image) {
+            $ingest = $this->ingestService->ingestFile($image, $this->config);
+            
             if (!$input->getOption('copySource')) {
                 $this->storageService->moveIngestToRemote($ingest, $remote);
             } else {
