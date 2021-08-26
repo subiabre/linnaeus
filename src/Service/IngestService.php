@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Config;
 use DateTime;
+use DateTimeZone;
 
 class IngestService
 {
@@ -114,11 +115,9 @@ class IngestService
 
     private function getImageDate(array $raw, string $file): DateTime
     {
-        $date = !empty($raw) && !empty($raw['FILE']['FileDateTime'])
-            ? $raw['FILE']['FileDateTime']
-            : filectime($file)
+        return !empty($raw) && !empty($raw['EXIF']['DateTimeOriginal'])
+            ? new DateTime($raw['EXIF']['DateTimeOriginal'])
+            : DateTime::createFromFormat('U', filectime($file))
             ;
-
-        return DateTime::createFromFormat('U', $date);
     }
 }
