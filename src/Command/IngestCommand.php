@@ -73,7 +73,9 @@ class IngestCommand extends Command
             $remote = $this->storageService->makePath($input->getArgument('remote'));
         }
 
+        $io->writeln("Getting all the images in the source directory...");
         $images = $this->storageService->readDirectoryImages($source);
+        $io->writeln("Ingesting the images in the source directory...\n");
 
         $progressBar = new ProgressBar($output, count($images));
         $progressBar->start();
