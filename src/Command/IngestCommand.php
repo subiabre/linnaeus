@@ -73,11 +73,15 @@ class IngestCommand extends Command
             $remote = $this->storageService->makePath($input->getArgument('remote'));
         }
 
-        $io->writeln("Getting all the images in the source directory...");
+        $io->write("Getting all the images in the source directory... ");
+
         $images = $this->storageService->readDirectoryImages($source);
+        $imagesCount = count($images);
+
+        $io->write(sprintf("Got %d images.\n", $imagesCount));
         $io->writeln("Ingesting the images in the source directory...\n");
 
-        $progressBar = new ProgressBar($output, count($images));
+        $progressBar = new ProgressBar($output, $imagesCount);
         $progressBar->start();
 
         foreach ($images as $key => $image) {
@@ -93,6 +97,8 @@ class IngestCommand extends Command
         }
 
         $progressBar->finish();
+
+        $io->writeln("");
         $io->success("Ingestion finished successfully.");
 
         return Command::SUCCESS;

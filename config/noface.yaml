@@ -2,3 +2,10 @@ output:
   fileNaming: "{year}-{month}-{day}-{hour}{minutes}_{fileName}.{fileExtension}"
   folderStructure:
     default: '/{year}/{month}/{day}/{imageType}'
+  dateFormatting:
+    year: 'Y'
+    month: 'm'
+    day: 'd'
+    hour: 'H'
+    minutes: 'i'
+    seconds: 's'

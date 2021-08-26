@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Service\StorageService;
+use DateTime;
 use Symfony\Component\Yaml\Yaml;
 
 class Config
@@ -16,6 +17,13 @@ class Config
     public const FILENAME = '{fileName}';
     public const EXTENSION = '{fileExtension}';
     public const IMAGE_TYPE = '{imageType}';
+
+    public const DEFAULT_DATE_FORMAT_YEAR = 'Y';
+    public const DEFAULT_DATE_FORMAT_MONTH = 'm';
+    public const DEFAULT_DATE_FORMAT_DAY = 'd';
+    public const DEFAULT_DATE_FORMAT_HOUR = 'H';
+    public const DEFAULT_DATE_FORMAT_MINUTES = 'i';
+    public const DEFAULT_DATE_FORMAT_SECONDS = 's';
 
     private array $config;
 
@@ -53,5 +61,40 @@ class Config
             $folderStructure,
             $data
         );
+    }
+
+    public function getDateFormat(string $unit): string
+    {
+        return array_key_exists($unit, $this->config['output']['dateFormatting'])
+            ? $this->config['output']['dateFormatting'][$unit]
+            : $this->getDefaultDateFormat($unit)
+            ;
+    }
+
+    public function getDefaultDateFormat(string $unit): string
+    {
+        switch ($unit) {
+            case 'year':
+                return self::DEFAULT_DATE_FORMAT_YEAR;
+                break;
+            case 'month':
+                return self::DEFAULT_DATE_FORMAT_MONTH;
+                break;
+            case 'day':
+                return self::DEFAULT_DATE_FORMAT_DAY;
+                break;
+            case 'hour':
+                return self::DEFAULT_DATE_FORMAT_HOUR;
+                break;
+            case 'minutes':
+                return self::DEFAULT_DATE_FORMAT_MINUTES;
+                break;
+            case 'seconds':
+                return self::DEFAULT_DATE_FORMAT_SECONDS;
+                break;
+            default:
+                return 'U';
+                break;
+        }
     }
 }

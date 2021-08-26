@@ -4,7 +4,6 @@ namespace App\Service;
 
 use App\Config;
 use DateTime;
-use DateTimeZone;
 
 class IngestService
 {
@@ -24,7 +23,7 @@ class IngestService
      */
     public function ingestFile(string $file, Config $config): array
     {
-        $data = $this->processExifData($file);
+        $data = $this->processExifData($file, $config);
 
         return [
             'output' => $this->storageService->buildPath(
@@ -57,9 +56,10 @@ class IngestService
     /**
      * Returns a normalized array from the exif data that can be processed by `App\Config`
      * @param string $file
+     * @param Config $config
      * @return array
      */
-    public function processExifData(string $file): array
+    public function processExifData(string $file, Config $config): array
     {
         $raw = $this->getImageExifData($file);
         $date = $this->getImageDate($raw, $file);
@@ -68,12 +68,12 @@ class IngestService
             Config::IMAGE_TYPE => $this->getImageType($raw, $file),
             Config::FILENAME => $this->getImageFilename($raw, $file),
             Config::EXTENSION => $this->getImageExtension($raw, $file),
-            Config::YEAR => $date->format('Y'),
-            Config::MONTH => $date->format('m'),
-            Config::DAY => $date->format('d'),
-            Config::HOUR => $date->format('h'),
-            Config::MINUTES => $date->format('i'),
-            Config::SECONDS => $date->format('s'),
+            Config::YEAR => $date->format($config->getDateFormat('year')),
+            Config::MONTH => $date->format($config->getDateFormat('month')),
+            Config::DAY => $date->format($config->getDateFormat('day')),
+            Config::HOUR => $date->format($config->getDateFormat('hour')),
+            Config::MINUTES => $date->format($config->getDateFormat('minutes')),
+            Config::SECONDS => $date->format($config->getDateFormat('seconds')),
         ];
     }
 
