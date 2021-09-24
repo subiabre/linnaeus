@@ -60,7 +60,7 @@ class ProcessCommand extends Command
         $imagesCount = count($images);
 
         $io->write(sprintf("Got %d images.\n", $imagesCount));
-        $io->writeln("Ingesting the images in the source directory...\n");
+        $io->writeln("Processing the images in the source directory...\n");
 
         $progressBar = new ProgressBar($output, $imagesCount);
         $progressBar->start();
