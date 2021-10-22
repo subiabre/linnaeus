@@ -5,7 +5,7 @@ namespace App\Service;
 class StorageService
 {
     /**
-     * Builds an absolute path with the given arguments
+     * Builds a valid path with the given arguments
      * @return string
      */
     public function buildPath(string... $args): string
@@ -15,7 +15,7 @@ class StorageService
             $path .= sprintf('%s%s', DIRECTORY_SEPARATOR, ltrim($value, '\\/'));
         }
 
-        return rtrim($path, DIRECTORY_SEPARATOR);
+        return $path;
     }
 
     /**
@@ -25,9 +25,8 @@ class StorageService
      */
     public function makePath(string $path): string
     {
-        $folder = rtrim($path, basename($path));
-        if (!file_exists($folder)) {
-            mkdir($folder, 0777, true);
+        if (!file_exists($path)) {
+            mkdir($path, 0777, true);
         }
 
         return $path;
@@ -76,14 +75,27 @@ class StorageService
     }
 
     /**
+     * Makes the ingest end path
+     * @param array $ingest
+     * @param string $remote
+     * @return string Output path
+     */
+    private function buildIngestOutput(array $ingest, string $remote): string
+    {
+        $output = $this->buildPath($remote, $ingest['output']);
+        
+        $this->makePath($this->buildPath(dirname($output), DIRECTORY_SEPARATOR));
+        return $output;
+    }
+
+    /**
      * Copy the ingest file from the source to remote
      * @param array $ingest
      * @param string $remote
      */
     public function copyIngestToRemote(array $ingest, string $remote)
     {
-        $output = $this->makePath($this->buildPath($remote, $ingest['output']));
-        copy($ingest['input'], $output);
+        copy($ingest['input'], $this->buildIngestOutput($ingest, $remote));
     }
 
     /**
@@ -93,8 +105,7 @@ class StorageService
      */
     public function moveIngestToRemote(array $ingest, string $remote)
     {
-        $output = $this->makePath($this->buildPath($remote, $ingest['output']));
-        rename($ingest['input'], $output);
+        rename($ingest['input'], $this->buildIngestOutput($ingest, $remote));
     }
 
     /**

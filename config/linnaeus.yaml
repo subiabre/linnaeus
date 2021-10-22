@@ -1,0 +1,10 @@
+# This file holds the default configuration linnaeus will take unless you specify one
+input:
+  # files at source folder will be removed once they are at their end folder
+  removeFiles: false
+
+output:
+  # files at target folder will be moved and named with the following structure
+  naming: 
+    files: "{year}-{month}-{day}-{hour}{minutes}{seconds}.{fileExtension}"
+    folders: "/{year}/{month}/{day}/{imageType}"

@@ -13,16 +13,14 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class IngestCommand extends Command
+class SortCommand extends Command
 {
-    private const CURRENT_WORKING_DIRECTORY_SYMBOL = '.';
-    
     private Config $config;
     private StorageService $storageService;
     private IngestService $ingestService;
 
-    protected static $defaultName = 'ingest';
-    protected static $defaultDescription = 'Get the files from a source folder to a remote folder according to the configuration.';
+    protected static $defaultName = 'sort';
+    protected static $defaultDescription = 'Process the files in a folder and sort them';
 
     public function __construct(
         Config $config, 
@@ -40,22 +38,24 @@ class IngestCommand extends Command
     {
         $this->addArgument(
             'source', 
-            InputArgument::REQUIRED,
-            'Path to origin folder'
+            InputArgument::OPTIONAL,
+            'Path to origin folder',
+            getcwd()
         );
 
         $this->addArgument(
             'remote',
-            InputArgument::REQUIRED,
-            'Path to target folder'
+            InputArgument::OPTIONAL,
+            'Path to target folder',
+            getcwd()
         );
 
         $this->addOption(
-            'copySource',
-            'cs',
+            'config',
+            'c',
             InputOption::VALUE_OPTIONAL,
-            'If set to true it will copy the files from origin, else it will move them from origin',
-            true
+            'Specify the filename to look for linnaeus configuration',
+            'linnaeus.yaml'
         );
     }
 
@@ -64,30 +64,41 @@ class IngestCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $source = realpath($input->getArgument('source'));
         $remote = realpath($input->getArgument('remote'));
+        $config = realpath($input->getOption('config'));
 
-        if ($source === self::CURRENT_WORKING_DIRECTORY_SYMBOL) {
-            $source = getcwd();
+        if (!$source) {
+            $io->error(sprintf("The source path `%s` does not exist.", $input->getArgument('source')));
+            return self::FAILURE;
         }
 
         if (!$remote) {
-            $remote = $this->storageService->makePath($input->getArgument('remote'));
+            $io->note(sprintf("The target path `%s` does not exist.", $input->getArgument('remote')));
+            $create = $io->confirm("Do you want to create it now?", true);
+
+            if (!$create) {
+                return self::FAILURE;
+            }
+
+            $remote = realpath($this->storageService->makePath($input->getArgument('remote')));
         }
 
-        $io->write("Getting all the images in the source directory... ");
+        $config = $config ? $this->config->setConfig($config) : $this->config;
+
+        $io->text("Getting all the images in the source directory... ");
 
         $images = $this->storageService->readDirectoryImages($source);
         $imagesCount = count($images);
 
-        $io->write(sprintf("Got %d images.\n", $imagesCount));
-        $io->writeln("Ingesting the images in the source directory...\n");
+        $io->text(sprintf("Got %d images.\n", $imagesCount));
+        $io->text("Ingesting the images in the source directory...\n");
 
         $progressBar = new ProgressBar($output, $imagesCount);
         $progressBar->start();
 
-        foreach ($images as $key => $image) {
-            $ingest = $this->ingestService->ingestFile($image, $this->config);
+        foreach ($images as $image) {
+            $ingest = $this->ingestService->ingestFile($image, $config);
             
-            if (!$input->getOption('copySource')) {
+            if ($this->config->hasRemove()) {
                 $this->storageService->moveIngestToRemote($ingest, $remote);
             } else {
                 $this->storageService->copyIngestToRemote($ingest, $remote);
@@ -98,8 +109,8 @@ class IngestCommand extends Command
 
         $progressBar->finish();
 
-        $io->writeln("");
-        $io->success("Ingestion finished successfully.");
+        $io->newLine(2);
+        $io->success(sprintf("Sorted %d images to `%s`", $imagesCount, $remote));
 
         return Command::SUCCESS;
     }
