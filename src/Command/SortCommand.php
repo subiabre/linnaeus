@@ -12,6 +12,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Stopwatch\Stopwatch;
 
 class SortCommand extends Command
 {
@@ -84,6 +85,10 @@ class SortCommand extends Command
 
         $config = $config ? $this->config->setConfig($config) : $this->config;
 
+        $stopwatch = new Stopwatch(true);
+        $stopwatch->start('sort');
+
+        $io->info(sprintf("Using configuration at `%s`", $config->getPath()));
         $io->text("Getting all the images in the source directory... ");
 
         $images = $this->storageService->readDirectoryImages($source);
@@ -108,9 +113,15 @@ class SortCommand extends Command
         }
 
         $progressBar->finish();
+        $time = $stopwatch->stop('sort');
 
         $io->newLine(2);
-        $io->success(sprintf("Sorted %d images to `%s`", $imagesCount, $remote));
+        $io->success([
+            "Finished sorting.",
+            sprintf("Time: %f seconds", $time->getDuration() / 1000),
+            sprintf("Input: %d images at `%s`", $imagesCount, $source),
+            sprintf("Output: %d images at `%s`", count($this->storageService->readDirectoryImages($remote)), $remote)
+        ]);
 
         return Command::SUCCESS;
     }
