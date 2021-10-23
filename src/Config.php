@@ -56,8 +56,8 @@ class Config
         return strtr($this->config['output']['naming']['folders'], $data);
     }
 
-    public function hasRemove(): bool
+    public function isCopyFiles(): bool
     {
-        return $this->config['input']['removeFiles'];
+        return $this->config['input']['copyFiles'];
     }
 }

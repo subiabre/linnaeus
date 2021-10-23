@@ -103,10 +103,10 @@ class SortCommand extends Command
         foreach ($images as $image) {
             $ingest = $this->ingestService->ingestFile($image, $config);
             
-            if ($this->config->hasRemove()) {
-                $this->storageService->moveIngestToRemote($ingest, $remote);
-            } else {
+            if ($this->config->isCopyFiles()) {
                 $this->storageService->copyIngestToRemote($ingest, $remote);
+            } else {
+                $this->storageService->moveIngestToRemote($ingest, $remote);
             }
 
             $progressBar->advance();

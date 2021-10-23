@@ -23,7 +23,7 @@ services:
 
     App\Config:
         arguments:
-            - '%kernel.project_dir%/config/linnaeus.yaml'
+            - '%kernel.project_dir%/linnaeus.yaml'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
