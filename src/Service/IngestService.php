@@ -63,6 +63,7 @@ class IngestService
     public function processExifData(string $file, Config $config): array
     {
         $raw = $this->getImageExifData($file);
+        $hash = $this->getFileHash($file);
         $date = $this->getImageDate($raw, $file);
 
         return [
@@ -71,8 +72,10 @@ class IngestService
             Config::IMAGE_TYPE => $this->getImageType($raw, $file),
             Config::IMAGE_WIDTH => $this->getImageWidth($raw, $file),
             Config::IMAGE_HEIGHT => $this->getImageHeight($raw, $file),
-            Config::FILE_NAME => $this->getImageFilename($raw, $file),
-            Config::FILE_EXT => $this->getImageExtension($raw, $file),
+            Config::FILE_NAME => $this->getFileName($raw, $file),
+            Config::FILE_EXT => $this->getFileExtension($raw, $file),
+            Config::FILE_HASH => $hash,
+            Config::FILE_HASH6 => substr($hash, 0, 6),
             Config::DATE_YEAR => $date->format('Y'),
             Config::DATE_MONTH => $date->format('m'),
             Config::DATE_DAY => $date->format('d'),
@@ -117,7 +120,12 @@ class IngestService
         return ltrim($imageType, 'image/');
     }
 
-    private function getImageExtension(array $raw, string $file): string
+    private function getFileHash(string $file): string
+    {
+        return hash_file('sha256', $file);
+    }
+
+    private function getFileExtension(array $raw, string $file): string
     {
         switch ($this->getImageType($raw, $file)) {
             case 'jpeg':
@@ -135,9 +143,9 @@ class IngestService
         }
     }
 
-    private function getImageFilename(array $raw, string $file): string
+    private function getFileName(array $raw, string $file): string
     {
-        $extension = $this->getImageExtension($raw, $file);
+        $extension = $this->getFileExtension($raw, $file);
         $filename = !empty($raw) && !empty($raw['FILE']['FileName'])
             ? $raw['FILE']['FileName']
             : basename($file)

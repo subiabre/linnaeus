@@ -14,6 +14,8 @@ class Config
     public const DATE_SECONDS = '{date.seconds}';
     public const FILE_NAME = '{file.name}';
     public const FILE_EXT = '{file.extension}';
+    public const FILE_HASH = '{file.hash}';
+    public const FILE_HASH6 = '{file.hash6}';
     public const IMAGE_TYPE = '{image.type}';
     public const IMAGE_WIDTH = '{image.width}';
     public const IMAGE_HEIGHT = '{image.height}';

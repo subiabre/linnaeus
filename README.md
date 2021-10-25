@@ -24,6 +24,8 @@ It can read the following variables from an image:
 `{file.*}` contains file generic metadata
 - `{file.name}` Name of the file
 - `{file.extension}` File extension
+- `{file.hash}` Complete file SHA256 hash string
+- `{file.hash6}` First six characters from file SHA256 hash string
 
 ## Usage
 Main command is `assort`. This command takes a linnaeus configuration file using the following precedence:
