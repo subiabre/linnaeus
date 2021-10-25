@@ -1,7 +1,7 @@
 # This file holds the default configuration linnaeus will take unless you specify one
 input:
   # files at source folder will be copied to target
-  copyFiles: false
+  copyFiles: true
 
 output:
   # files at target folder will be moved and named with the following structure
