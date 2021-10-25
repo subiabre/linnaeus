@@ -14,13 +14,13 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Stopwatch\Stopwatch;
 
-class SortCommand extends Command
+class IngestCommand extends Command
 {
     private Config $config;
     private StorageService $storageService;
     private IngestService $ingestService;
 
-    protected static $defaultName = 'sort';
+    protected static $defaultName = 'ingest';
     protected static $defaultDescription = 'Process the files in a folder and sort them';
 
     public function __construct(
@@ -117,10 +117,10 @@ class SortCommand extends Command
 
         $io->newLine(2);
         $io->success([
-            "Finished sorting.",
+            sprintf("Sorted %d images.", $imagesCount),
             sprintf("Time: %f seconds", $time->getDuration() / 1000),
-            sprintf("Input: %d images at `%s`", $imagesCount, $source),
-            sprintf("Output: %d images at `%s`", count($this->storageService->readDirectoryImages($remote)), $remote)
+            sprintf("Source: `%s`", $source),
+            sprintf("Remote: `%s`", $remote)
         ]);
 
         return Command::SUCCESS;

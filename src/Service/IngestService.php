@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Config;
 use DateTime;
+use SplFileInfo;
 
 class IngestService
 {
@@ -65,16 +66,40 @@ class IngestService
         $date = $this->getImageDate($raw, $file);
 
         return [
+            Config::IMAGE_AUTHOR => $this->getData($raw, 'IFD0', 'Artist'),
+            Config::IMAGE_CAMERA => $this->getData($raw, 'IFD0', 'Model'),
             Config::IMAGE_TYPE => $this->getImageType($raw, $file),
-            Config::FILENAME => $this->getImageFilename($raw, $file),
-            Config::EXTENSION => $this->getImageExtension($raw, $file),
-            Config::YEAR => $date->format('Y'),
-            Config::MONTH => $date->format('m'),
-            Config::DAY => $date->format('d'),
-            Config::HOUR => $date->format('H'),
-            Config::MINUTES => $date->format('i'),
-            Config::SECONDS => $date->format('s'),
+            Config::IMAGE_WIDTH => $this->getImageWidth($raw, $file),
+            Config::IMAGE_HEIGHT => $this->getImageHeight($raw, $file),
+            Config::FILE_NAME => $this->getImageFilename($raw, $file),
+            Config::FILE_EXT => $this->getImageExtension($raw, $file),
+            Config::DATE_YEAR => $date->format('Y'),
+            Config::DATE_MONTH => $date->format('m'),
+            Config::DATE_DAY => $date->format('d'),
+            Config::DATE_HOUR => $date->format('H'),
+            Config::DATE_MINUTES => $date->format('i'),
+            Config::DATE_SECONDS => $date->format('s'),
         ];
+    }
+
+    /**
+     * Get the value at the specified keys
+     * @param array $raw
+     * @param string $keys
+     * @return null|mixed The value contained at the specified keys
+     */
+    private function getData(array $raw, string... $keys)
+    {
+        $data = $raw;
+        foreach ($keys as $key) {
+            if (!array_key_exists($key, $data)) {
+                return null;
+            }
+
+            $data = $data[$key];
+        }
+
+        return $data;
     }
 
     private function getImageExifData(string $file): array
@@ -94,12 +119,20 @@ class IngestService
 
     private function getImageExtension(array $raw, string $file): string
     {
-        $fileExtensions = !empty($raw) && !empty($raw['FILE']['FileName'])
-            ? explode('.', $raw['FILE']['FileName'])
-            : explode('.', basename($file))
-            ;
-
-        return end($fileExtensions);
+        switch ($this->getImageType($raw, $file)) {
+            case 'jpeg':
+                return image_type_to_extension(IMAGETYPE_JPEG, false);   
+            case 'png':
+                return image_type_to_extension(IMAGETYPE_PNG, false);
+            case 'tiff':
+                return image_type_to_extension(IMAGETYPE_TIFF_II, false);
+            case 'gif':
+                return image_type_to_extension(IMAGETYPE_GIF, false);
+            case 'bmp':
+                return image_type_to_extension(IMAGETYPE_BMP, false);
+            default:
+                return (new SplFileInfo($file))->getExtension();
+        }
     }
 
     private function getImageFilename(array $raw, string $file): string
@@ -118,6 +151,22 @@ class IngestService
         return !empty($raw) && !empty($raw['EXIF']['DateTimeOriginal'])
             ? new DateTime($raw['EXIF']['DateTimeOriginal'])
             : DateTime::createFromFormat('U', filectime($file))
+            ;
+    }
+
+    private function getImageWidth(array $raw, string $file): int
+    {
+        return $this->getData($raw, 'COMPUTED', 'Width')
+            ? $this->getData($raw, 'COMPUTED', 'Width')
+            : getimagesize($file)[0]
+            ;
+    }
+
+    private function getImageHeight(array $raw, string $file): int
+    {
+        return $this->getData($raw, 'COMPUTED', 'Height')
+            ? $this->getData($raw, 'COMPUTED', 'Height')
+            : getimagesize($file)[1]
             ;
     }
 }

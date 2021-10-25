@@ -6,15 +6,19 @@ use Symfony\Component\Yaml\Yaml;
 
 class Config
 {
-    public const YEAR = '{year}';
-    public const MONTH = '{month}';
-    public const DAY = '{day}';
-    public const HOUR = '{hour}';
-    public const MINUTES = '{minutes}';
-    public const SECONDS = '{seconds}';
-    public const FILENAME = '{fileName}';
-    public const EXTENSION = '{fileExtension}';
-    public const IMAGE_TYPE = '{imageType}';
+    public const DATE_YEAR = '{date.year}';
+    public const DATE_MONTH = '{date.month}';
+    public const DATE_DAY = '{date.day}';
+    public const DATE_HOUR = '{date.hour}';
+    public const DATE_MINUTES = '{date.minutes}';
+    public const DATE_SECONDS = '{date.seconds}';
+    public const FILE_NAME = '{file.name}';
+    public const FILE_EXT = '{file.extension}';
+    public const IMAGE_TYPE = '{image.type}';
+    public const IMAGE_WIDTH = '{image.width}';
+    public const IMAGE_HEIGHT = '{image.height}';
+    public const IMAGE_AUTHOR = '{image.author}';
+    public const IMAGE_CAMERA = '{image.camera}';
 
     private string $path;
     private array $config;

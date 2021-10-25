@@ -6,5 +6,5 @@ input:
 output:
   # files at target folder will be moved and named with the following structure
   naming: 
-    files: "{year}-{month}-{day}-{hour}{minutes}{seconds}.{fileExtension}"
-    folders: "/{year}/{month}/{day}/{imageType}"
+    files: "{date.year}-{date.month}-{date.day}-{date.hour}{date.minutes}{date.seconds}_{image.width}x{image.height}.{file.extension}"
+    folders: "/{date.year}/{date.month}/{date.day}/{image.type}"

@@ -5,18 +5,28 @@
 It scans a folder, filters through images, reads them and allows the user to automate the sorting process of the images by using a YAML based configuration and reading the metadata in the images.
 
 It can read the following variables from an image:
-- `{imageType}` MIME type as specified by the image
-- `{fileName}` Name of the file
-- `{fileExtension}` File extension
-- `{year}` The year the image was taken or if not present, the year the file was created
-- `{month}` The month the image or the file were created at
-- `{day}` The day the image or the file were created at
-- `{hour}` The hour the image or the file were created at
-- `{minutes}` The minutes the image or the file were created at
-- `{seconds}` The seconds the image or the file were created at
+
+`{image.*}` contains image specific metadata
+- `{image.type}` MIME type as specified by the image
+- `{image.width}` X size of the image in pixels, as specified by EXIF data or the file itself
+- `{image.height}` Y size of the image in pixels, as specified by EXIF data or the file itself
+- `{image.author}` Name of the credited artist if present, if not will be just a blank string: ""
+- `{image.camera}` Name of the credited camera model if present, if not will be just a blank string: ""
+
+`{date.*}` is read from the image creation date as specified by the EXIF data or if not present, the date the file was last modified
+- `{date.year}`
+- `{date.month}`
+- `{date.day}`
+- `{date.hour}`
+- `{date.minutes}`
+- `{date.seconds}`
+
+`{file.*}` contains file generic metadata
+- `{file.name}` Name of the file
+- `{file.extension}` File extension
 
 ## Usage
-Main command is `sort`. This command takes a linnaeus configuration file using the following precedence:
+Main command is `assort`. This command takes a linnaeus configuration file using the following precedence:
 
 1. File provided via option `--configuration`
 2. File `linnaeus.yaml` located at source folder.
@@ -32,4 +42,4 @@ output:
         folders: # Folder naming structure
 ```
 
-`sort` will take all the image files in a *source* folder and move or copy them to a *target* folder where the input files will be renamed using the structure specified at configuration `output.naming.files` and moved into folders inside the target folder using the structure specified at configuration `output.naming.folders`.
+`assort` will take all the image files in a *source* folder and move or copy them to a *target* folder where the input files will be renamed using the structure specified at configuration `output.naming.files` and moved into folders inside the target folder using the structure specified at configuration `output.naming.folders`.
