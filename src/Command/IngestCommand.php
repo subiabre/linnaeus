@@ -45,7 +45,7 @@ class IngestCommand extends Command
         );
 
         $this->addArgument(
-            'remote',
+            'target',
             InputArgument::OPTIONAL,
             'Path to target folder',
             getcwd()
@@ -64,7 +64,7 @@ class IngestCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $source = realpath($input->getArgument('source'));
-        $remote = realpath($input->getArgument('remote'));
+        $target = realpath($input->getArgument('target'));
         $config = realpath($input->getOption('config'));
 
         if (!$source) {
@@ -72,15 +72,15 @@ class IngestCommand extends Command
             return self::FAILURE;
         }
 
-        if (!$remote) {
-            $io->note(sprintf("The target path `%s` does not exist.", $input->getArgument('remote')));
+        if (!$target) {
+            $io->note(sprintf("The target path `%s` does not exist.", $input->getArgument('target')));
             $create = $io->confirm("Do you want to create it now?", true);
 
             if (!$create) {
                 return self::FAILURE;
             }
 
-            $remote = realpath($this->storageService->makePath($input->getArgument('remote')));
+            $target = realpath($this->storageService->makePath($input->getArgument('target')));
         }
 
         $config = $config ? $this->config->setConfig($config) : $this->config;
@@ -104,9 +104,9 @@ class IngestCommand extends Command
             $ingest = $this->ingestService->ingestFile($image, $config);
             
             if ($this->config->isCopyFiles()) {
-                $this->storageService->copyIngestToRemote($ingest, $remote);
+                $this->storageService->copyIngestToRemote($ingest, $target);
             } else {
-                $this->storageService->moveIngestToRemote($ingest, $remote);
+                $this->storageService->moveIngestToRemote($ingest, $target);
             }
 
             $progressBar->advance();
@@ -120,7 +120,7 @@ class IngestCommand extends Command
             sprintf("Files: %d images.", $imagesCount),
             sprintf("Time: %f seconds", $time->getDuration() / 1000),
             sprintf("Source: `%s`", $source),
-            sprintf("Remote: `%s`", $remote)
+            sprintf("Target: `%s`", $target)
         ]);
 
         return Command::SUCCESS;
