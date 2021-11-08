@@ -51,14 +51,27 @@ class Config
         return $this->path;
     }
 
+    private function resolveTaxonomy($key)
+    {
+        if (is_array($key)) {
+            return implode("", $key);
+        }
+
+        return $key;
+    }
+
     public function getFilename(array $data): string
     {
-        return strtr($this->config['output']['naming']['files'], $data);
+        $structure = $this->resolveTaxonomy($this->config['output']['naming']['files']);
+
+        return strtr($structure, $data);
     }
 
     public function getFolder(array $data): string
     {
-        return strtr($this->config['output']['naming']['folders'], $data);
+        $structure = $this->resolveTaxonomy($this->config['output']['naming']['folders']);
+
+        return strtr($structure, $data);
     }
 
     public function isCopyFiles(): bool
