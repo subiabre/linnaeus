@@ -95,7 +95,7 @@ class IngestCommand extends Command
         $imagesCount = count($images);
 
         $io->text(sprintf("Got %d images.\n", $imagesCount));
-        $io->text("Ingesting the images in the source directory...\n");
+        $io->text("Ingesting the images in the source directory...");
 
         $progressBar = new ProgressBar($output, $imagesCount);
         $progressBar->start();
@@ -117,7 +117,7 @@ class IngestCommand extends Command
 
         $io->newLine(2);
         $io->success([
-            sprintf("Sorted %d images.", $imagesCount),
+            sprintf("Files: %d images.", $imagesCount),
             sprintf("Time: %f seconds", $time->getDuration() / 1000),
             sprintf("Source: `%s`", $source),
             sprintf("Remote: `%s`", $remote)

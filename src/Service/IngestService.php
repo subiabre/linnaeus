@@ -63,7 +63,6 @@ class IngestService
     public function processExifData(string $file, Config $config): array
     {
         $raw = $this->getImageExifData($file);
-        $hash = $this->getFileHash($file);
         $date = $this->getImageDate($raw, $file);
 
         return [
@@ -74,8 +73,7 @@ class IngestService
             Config::IMAGE_HEIGHT => $this->getImageHeight($raw, $file),
             Config::FILE_NAME => $this->getFileName($raw, $file),
             Config::FILE_EXT => $this->getFileExtension($raw, $file),
-            Config::FILE_HASH => $hash,
-            Config::FILE_HASH6 => substr($hash, 0, 6),
+            Config::FILE_HASH => substr($this->getFileHash($file), 0, $config->getFileHashLength()),
             Config::DATE_YEAR => $date->format('Y'),
             Config::DATE_MONTH => $date->format('m'),
             Config::DATE_DAY => $date->format('d'),
