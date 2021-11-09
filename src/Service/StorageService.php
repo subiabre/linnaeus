@@ -75,37 +75,37 @@ class StorageService
     }
 
     /**
-     * Makes the ingest end path
-     * @param array $ingest
+     * Makes the taxonomy end path
+     * @param array $taxonomy
      * @param string $remote
      * @return string Output path
      */
-    private function buildIngestOutput(array $ingest, string $remote): string
+    private function buildTaxonomyOutput(array $taxonomy, string $remote): string
     {
-        $output = $this->buildPath($remote, $ingest['output']);
+        $output = $this->buildPath($remote, $taxonomy['output']);
         
         $this->makePath($this->buildPath(dirname($output), DIRECTORY_SEPARATOR));
         return $output;
     }
 
     /**
-     * Copy the ingest file from the source to remote
-     * @param array $ingest
+     * Copy the taxonomy file from the source to remote
+     * @param array $taxonomy
      * @param string $remote
      */
-    public function copyIngestToRemote(array $ingest, string $remote)
+    public function copyTaxonomyToRemote(array $taxonomy, string $remote)
     {
-        copy($ingest['input'], $this->buildIngestOutput($ingest, $remote));
+        copy($taxonomy['input'], $this->buildTaxonomyOutput($taxonomy, $remote));
     }
 
     /**
-     * Move the ingest file from the source to remote
-     * @param array $ingest
+     * Move the taxonomy file from the source to remote
+     * @param array $taxonomy
      * @param string $remote
      */
-    public function moveIngestToRemote(array $ingest, string $remote)
+    public function moveTaxonomyToRemote(array $taxonomy, string $remote)
     {
-        rename($ingest['input'], $this->buildIngestOutput($ingest, $remote));
+        rename($taxonomy['input'], $this->buildTaxonomyOutput($taxonomy, $remote));
     }
 
     /**

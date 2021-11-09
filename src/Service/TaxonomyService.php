@@ -6,7 +6,7 @@ use App\Config;
 use DateTime;
 use SplFileInfo;
 
-class IngestService
+class TaxonomyService
 {
     private StorageService $storageService;
 
@@ -17,12 +17,12 @@ class IngestService
     }
 
     /**
-     * Generate the ingest output for an image file
+     * Generate the taxonomy output for an image file
      * @param string $file
      * @param Config $config
      * @return array
      */
-    public function ingestFile(string $file, Config $config): array
+    public function taxonomizeFile(string $file, Config $config): array
     {
         $data = $this->processExifData($file, $config);
 
@@ -41,14 +41,14 @@ class IngestService
      * @param Config $config
      * @return array
      */
-    public function ingestFiles(array $files, Config $config): array
+    public function taxonomizeFiles(array $files, Config $config): array
     {
         foreach ($files as $key => $file) {
             if (!$this->storageService->isImage($file)) {
                 continue;
             }
 
-            $files[$key] = $this->ingestFile($file, $config);
+            $files[$key] = $this->taxonomizeFile($file, $config);
         }
 
         return $files;

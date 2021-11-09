@@ -27,10 +27,10 @@ It can read the following variables from an image:
 - `{file.hash}` Complete file SHA256 hash string
 
 ## Usage
-Main command is `ingest`. This command takes a linnaeus configuration file using the following precedence:
+To run linnaeus: `bin/linnaeus`. This command takes a linnaeus configuration file using the following precedence:
 
 1. File provided via option `--configuration`
-2. File `linnaeus.yaml` located at source folder.
+2. File `linnaeus.yaml` located at the execution folder.
 3. File `linnaeus.yaml` located at linnaeus installation folder.
 
 This file can specify the following keys:
@@ -48,4 +48,4 @@ output:
         folders: ""
 ```
 
-`ingest` will take all the image files in a *source* folder and move or copy them to a *target* folder where the input files will be renamed using the structure specified at configuration `output.naming.files` and moved into folders inside the target folder using the structure specified at configuration `output.naming.folders`.
+`bin/linnaeus` will take all the image files in a *source* folder and move or copy them to a *target* folder where the input files will be renamed using the structure specified at configuration `output.naming.files` and moved into folders inside the target folder using the structure specified at configuration `output.naming.folders`.

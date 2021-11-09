@@ -3,8 +3,8 @@
 namespace App\Command;
 
 use App\Config;
-use App\Service\IngestService;
 use App\Service\StorageService;
+use App\Service\TaxonomyService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
@@ -14,25 +14,25 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Stopwatch\Stopwatch;
 
-class IngestCommand extends Command
+class TaxonomizeCommand extends Command
 {
     private Config $config;
     private StorageService $storageService;
-    private IngestService $ingestService;
+    private TaxonomyService $taxonomyService;
 
-    protected static $defaultName = 'ingest';
-    protected static $defaultDescription = 'Process the files in a folder and sort them';
+    protected static $defaultName = 'taxonomize';
+    protected static $defaultDescription = 'Process the files in a folder and taxonomize them';
 
     public function __construct(
         Config $config, 
         StorageService $storageService,
-        IngestService $ingestService
+        TaxonomyService $taxonomyService
     ) {
         parent::__construct();
         
         $this->config = $config;
         $this->storageService = $storageService;
-        $this->ingestService = $ingestService;
+        $this->taxonomyService = $taxonomyService;
     }
 
     protected function configure(): void
@@ -86,7 +86,7 @@ class IngestCommand extends Command
         $config = $config ? $this->config->setConfig($config) : $this->config;
 
         $stopwatch = new Stopwatch(true);
-        $stopwatch->start('sort');
+        $stopwatch->start('execution');
 
         $io->info(sprintf("Using configuration at `%s`", $config->getPath()));
         $io->text("Getting all the images in the source directory... ");
@@ -101,24 +101,24 @@ class IngestCommand extends Command
         $progressBar->start();
 
         foreach ($images as $image) {
-            $ingest = $this->ingestService->ingestFile($image, $config);
+            $taxonomy = $this->taxonomyService->taxonomizeFile($image, $config);
             
             if ($this->config->isCopyFiles()) {
-                $this->storageService->copyIngestToRemote($ingest, $target);
+                $this->storageService->copyTaxonomyToRemote($taxonomy, $target);
             } else {
-                $this->storageService->moveIngestToRemote($ingest, $target);
+                $this->storageService->moveTaxonomyToRemote($taxonomy, $target);
             }
 
             $progressBar->advance();
         }
 
         $progressBar->finish();
-        $time = $stopwatch->stop('sort');
+        $execution = $stopwatch->stop('execution');
 
         $io->newLine(2);
         $io->success([
-            sprintf("Files: %d images.", $imagesCount),
-            sprintf("Time: %f seconds", $time->getDuration() / 1000),
+            sprintf("Time: %f seconds", $execution->getDuration() / 1000),
+            sprintf("Input: %d images.", $imagesCount),
             sprintf("Source: `%s`", $source),
             sprintf("Target: `%s`", $target)
         ]);
