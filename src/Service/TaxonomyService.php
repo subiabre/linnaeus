@@ -153,7 +153,7 @@ class TaxonomyService
     {
         $extension = $this->getFileExtension($raw, $file);
         
-        return basename($file, $extension);
+        return basename($file, ".$extension");
     }
 
     private function getImageDate(array $raw, string $file): DateTime
