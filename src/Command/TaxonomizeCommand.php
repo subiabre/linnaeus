@@ -101,12 +101,12 @@ class TaxonomizeCommand extends Command
         $progressBar->start();
 
         foreach ($images as $image) {
-            $taxonomy = $this->taxonomyService->taxonomizeFile($image, $config);
+            $taxonomy = $this->taxonomyService->getFileTaxonomy($image, $target, $config);
             
-            if ($this->config->isCopyFiles()) {
-                $this->storageService->copyTaxonomyToRemote($taxonomy, $target);
+            if ($config->isCopyFiles()) {
+                $this->storageService->copyTaxonomy($taxonomy);
             } else {
-                $this->storageService->moveTaxonomyToRemote($taxonomy, $target);
+                $this->storageService->moveTaxonomy($taxonomy);
             }
 
             $progressBar->advance();

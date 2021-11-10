@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Config;
+use App\Taxonomy;
 use DateTime;
 use SplFileInfo;
 
@@ -17,38 +18,39 @@ class TaxonomyService
     }
 
     /**
-     * Generate the taxonomy output for an image file
+     * Generate the Taxonomy for an image file
      * @param string $file
+     * @param string $target
      * @param Config $config
-     * @return array
+     * @return Taxonomy
      */
-    public function taxonomizeFile(string $file, Config $config): array
+    public function getFileTaxonomy(string $file, string $target, Config $config): Taxonomy
     {
         $data = $this->processExifData($file, $config);
+        $output = $this->storageService->buildPath(
+            $target,
+            strtr($config->getNamingFolders(), $data),
+            strtr($config->getNamingFiles(), $data)
+        );
 
-        return [
-            'output' => $this->storageService->buildPath(
-                $config->getFolder($data),
-                $config->getFilename($data)
-            ),
-            'input' => $file
-        ];
+        return new Taxonomy($file, $output);
     }
 
     /**
-     * Generate the ingest output for each file in an array of image files
+     * Generate the Taxonomy for each file in an array of image files
      * @param array $files
+     * @param string $target
      * @param Config $config
-     * @return array
+     * @return Taxonomy[]
      */
-    public function taxonomizeFiles(array $files, Config $config): array
+    public function taxonomizeFiles(array $files, string $target, Config $config): array
     {
         foreach ($files as $key => $file) {
             if (!$this->storageService->isImage($file)) {
                 continue;
             }
 
-            $files[$key] = $this->taxonomizeFile($file, $config);
+            $files[$key] = $this->getFileTaxonomy($file, $target, $config);
         }
 
         return $files;

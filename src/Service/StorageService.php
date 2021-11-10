@@ -2,6 +2,8 @@
 
 namespace App\Service;
 
+use App\Taxonomy;
+
 class StorageService
 {
     /**
@@ -76,36 +78,32 @@ class StorageService
 
     /**
      * Makes the taxonomy end path
-     * @param array $taxonomy
-     * @param string $remote
+     * @param Taxonomy $taxonomy
      * @return string Output path
      */
-    private function buildTaxonomyOutput(array $taxonomy, string $remote): string
+    private function buildTaxonomyOutput(Taxonomy $taxonomy): string
     {
-        $output = $this->buildPath($remote, $taxonomy['output']);
-        
-        $this->makePath($this->buildPath(dirname($output), DIRECTORY_SEPARATOR));
-        return $output;
+        $this->makePath($this->buildPath(dirname($taxonomy->getOutput()), DIRECTORY_SEPARATOR));
+
+        return $taxonomy->getOutput();
     }
 
     /**
-     * Copy the taxonomy file from the source to remote
-     * @param array $taxonomy
-     * @param string $remote
+     * Copy the taxonomy file from the source to target
+     * @param Taxonomy $taxonomy
      */
-    public function copyTaxonomyToRemote(array $taxonomy, string $remote)
+    public function copyTaxonomy(Taxonomy $taxonomy)
     {
-        copy($taxonomy['input'], $this->buildTaxonomyOutput($taxonomy, $remote));
+        copy($taxonomy->getInput(), $this->buildTaxonomyOutput($taxonomy));
     }
 
     /**
-     * Move the taxonomy file from the source to remote
-     * @param array $taxonomy
-     * @param string $remote
+     * Move the taxonomy file from the source to target
+     * @param Taxonomy $taxonomy
      */
-    public function moveTaxonomyToRemote(array $taxonomy, string $remote)
+    public function moveTaxonomy(Taxonomy $taxonomy)
     {
-        rename($taxonomy['input'], $this->buildTaxonomyOutput($taxonomy, $remote));
+        rename($taxonomy->getInput(), $this->buildTaxonomyOutput($taxonomy));
     }
 
     /**
