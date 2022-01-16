@@ -20,7 +20,7 @@ class TaxonomizeCommand extends Command
     private StorageService $storageService;
     private TaxonomyService $taxonomyService;
 
-    protected static $defaultName = 'taxonomize';
+    protected static $defaultName = 'app:taxonomize|get';
     protected static $defaultDescription = 'Process the files in a folder and taxonomize them';
 
     public function __construct(

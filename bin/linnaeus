@@ -17,7 +17,7 @@ return function (array $context) {
 
     $app = new Application($kernel);
     $app->setName('linnaeus');
-    $app->setDefaultCommand('taxonomize');
+    $app->setDefaultCommand('app:taxonomize');
     $app->setVersion($version->getVersion());
 
     return $app;
