@@ -1,5 +1,9 @@
 # linnaeus
+1. [About](#About)
+2. [Installation](#Installation)
+3. [Usage](#Usage)
 
+## About
 `linnaeus` is a small command line tool to help me organize my photography collection.
 
 It scans a folder, filters through images, reads them and allows the user to automate the sorting process of the images by using a YAML based configuration and reading the metadata in the images.
@@ -26,8 +30,29 @@ It can read the following variables from an image:
 - `{file.extension}` File extension
 - `{file.hash}` Complete file SHA256 hash string
 
+## Installation
+`linnaeus` is a symfony-based app and as such requires that you have, at a minimum, the [php-cli](http://www.php-cli.com/) interpreter installed, or a working PHP environment, and [composer](https://getcomposer.org/).
+
+Clone or download this package.
+```sh
+git clone https://github.com/subiabre/linnaeus
+```
+
+Install dependencies.
+```sh
+composer install
+```
+
+
 ## Usage
-To run linnaeus: `bin/linnaeus`. This command takes a linnaeus configuration file using the following precedence:
+To run linnaeus: 
+
+```bash
+bin/linnaeus
+# or alternatively
+bin/linnaeus get path/to/input/folder path/to/output/folder
+```
+This command takes a linnaeus configuration file using the following precedence:
 
 1. File provided via option `--configuration`
 2. File `linnaeus.yaml` located at the execution folder.
@@ -36,7 +61,8 @@ To run linnaeus: `bin/linnaeus`. This command takes a linnaeus configuration fil
 This file can specify the following keys:
 ```yaml
 input:
-    # Should the original files be copied from source to remote folder? If set to false, the files at source will be moved out of source.
+    # Should the original files be copied from source to remote folder?
+    # If set to false, the files at source will be moved out of source.
     copyFiles: true
 output:
     # The number of characters at the start of {file.hash} to include in the final filename
