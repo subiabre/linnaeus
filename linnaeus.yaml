@@ -9,5 +9,6 @@ output:
       - "{date.year}-{date.month}-{date.day}"
       - "-{date.hour}{date.minutes}{date.seconds}"
       - "_{image.width}x{image.height}"
+      - "_{file.hash}"
       - ".{file.extension}"
     folders: "/{date.year}/{date.month}/{date.day}/{image.type}"
