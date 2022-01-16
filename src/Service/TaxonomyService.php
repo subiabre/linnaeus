@@ -172,7 +172,7 @@ class TaxonomyService
 
         return $width
             ? $width
-            : getimagesize($file)[0]
+            : $this->getImageSizes($file, 0)
             ;
     }
 
@@ -182,7 +182,19 @@ class TaxonomyService
 
         return $height
             ? $height
-            : getimagesize($file)[1]
+            : $this->getImageSizes($file, 1)
             ;
+    }
+
+    /**
+     * Attempts to read the file image sizes
+     * @param string $file
+     * @param int $key 0 for width, 1 for height
+     */
+    private function getImageSizes(string $file, int $key): int
+    {
+        $sizes = getimagesize($file);
+
+        return $sizes ? $sizes[$key] : 0;
     }
 }
