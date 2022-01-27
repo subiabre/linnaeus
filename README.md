@@ -4,7 +4,7 @@
 3. [Usage](#Usage)
 
 ## About
-`linnaeus` is a small command line tool to help me organize my photography collection.
+`linnaeus` is a small command line tool to help me organize my photography collection. Read the [blog article](https://www.subiabre.xyz/2021/11/09/a-console-app-to-catalog-photo-files-large-libraries/) detailing use cases and the reasons behind creating and using linnaeus.
 
 It scans a folder, filters through images, reads them and allows the user to automate the sorting process of the images by using a YAML based configuration and reading the metadata in the images.
 
